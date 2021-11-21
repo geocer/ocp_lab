@@ -1,0 +1,17 @@
+stages:
+  - build
+
+build:
+  stage: build
+  image: ebits/openshift-client
+  before_script:
+    - oc login <ocp-address> --username=<your-user> --password=<your-password> --insecure-skip-tls-verify
+    - oc project <your-project-name> > /dev/null 2>&1
+  script:
+    - oc start-build backend --follow || sleep 3s
+
+  artifacts:
+    paths:
+      - params.*
+  only:
+    - master

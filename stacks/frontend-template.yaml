@@ -1,0 +1,162 @@
+apiVersion: v1
+kind: Template
+metadata:
+  annotations:
+    iconClass: icon-python
+    description: "An example for Frontend application with Python. It was provided by Gerdau's Devops Team, see https://gitlab.gerdau.digital/devops/ocp-lab-guide/blob/master/README.md."
+    tags: microservice,python
+    "openshift.io/display-name": "Frontend Gerdau Lab"
+  name: frontend-gerdau-lab
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: frontend
+    labels:
+      application: frontend
+  spec:
+    tags:
+    - name: latest
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: frontend
+    labels:
+      application: frontend
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: frontend:latest
+    source:
+      git:
+        ref: ${GIT_REF}
+        uri: ${GIT_URI}
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: python:3.6
+          namespace: ${IMAGE_STREAM_NAMESPACE}
+      type: Source
+    triggers:
+    - type: ConfigChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: frontend
+    labels:
+      application: frontend
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: frontend
+    strategy:
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: frontend
+          deploymentconfig: frontend
+        name: frontend
+      spec:
+        containers:
+        - env:
+          - name: APP_FILE
+            value: "app.py"
+          - name: BACKEND_HOST
+            value: "backend"
+          - name: BACKEND_PORT
+            value: "8080"
+          image: frontend
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: frontend
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command: ["/usr/bin/pgrep","python"]
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: 20m
+            requests:
+              memory: 128Mi
+              cpu: 10m
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 75
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - frontend
+        from:
+          kind: ImageStreamTag
+          name: frontend:latest
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: frontend
+      application: frontend
+    name: frontend
+  spec:
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentconfig: frontend
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      application: frontend
+    name: frontend
+  spec:
+    to:
+      kind: Service
+      name: frontend
+      weight: 100
+parameters:
+- displayName: Application name
+  name: APPLICATION_NAME
+  required: true
+  value: frontend
+- description: Git source URI for application
+  displayName: Git source repository
+  name: GIT_URI
+  required: true
+- description: Git branch/tag reference
+  displayName: Git branch/tag reference
+  name: GIT_REF
+  value: master
+- displayName: ImageStream Namespace
+  description: Namespace in which the ImageStreams for Red Hat Python image is installed. These ImageStreams are normally installed in the openshift namespace. You should only need to modify this if you've installed the ImageStreams in a different namespace/project.
+  name: IMAGE_STREAM_NAMESPACE
+  required: true
+  value: openshift

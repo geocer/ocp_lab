@@ -1,0 +1,336 @@
+apiVersion: v1
+kind: Template
+metadata:
+  annotations:
+    iconClass: icon-nodejs
+    description: "An example for Backend application with Nodejs. It was provided by Gerdau's Devops Team, see https://gitlab.gerdau.digital/devops/ocp-lab-guide/blob/master/README.md."
+    tags: microservice,nodejs, bluegreen
+    "openshift.io/display-name": "Backend Gerdau BlueGreen Lab"
+  name: backend-gerdau-bluegreen-lab
+objects:
+# Backend Blue
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: backend-blue
+    labels:
+      application: backend
+  spec:
+    tags:
+    - name: latest
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: backend-blue
+    labels:
+      application: backend
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: backend-blue:latest
+    source:
+      git:
+        ref: feature-blue
+        uri: ${GIT_URI}
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: nodejs:10
+          namespace: ${IMAGE_STREAM_NAMESPACE}
+      type: Source
+    triggers:
+    - type: ConfigChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      application: backend
+      app: backend
+      component: backend-blue
+    name: backend-blue
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: backend-blue
+    strategy:
+      activeDeadlineSeconds: 21600
+      recreateParams:
+        timeoutSeconds: 600
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: backend
+          component: backend-blue
+          deploymentconfig: backend-blue
+        name: backend-blue
+      spec:
+        containers:
+        - env:
+          - name: TZ
+            value: "Brazil"
+          image: backend
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /v1/health/live
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: backend-blue
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /v1/health/read
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: 50m
+            requests:
+              memory: 128Mi
+              cpu: 10m
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - backend-blue
+        from:
+          kind: ImageStreamTag
+          name: backend-blue:latest
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: backend
+      application: backend
+      component: backend-blue
+    name: backend-blue
+  spec:
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentconfig: backend-blue
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      application: backend
+      component: backend-blue
+    name: backend-blue
+  spec:
+    to:
+      kind: Service
+      name: backend-blue
+      weight: 100
+    wildcardPolicy: None
+# Backend Green
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: backend-green
+    labels:
+      application: backend
+  spec:
+    tags:
+    - name: latest
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: backend-green
+    labels:
+      application: backend
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: backend-green:latest
+    source:
+      git:
+        ref: master
+        uri: ${GIT_URI}
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: nodejs:10
+          namespace: ${IMAGE_STREAM_NAMESPACE}
+      type: Source
+    triggers:
+    - type: ConfigChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      application: backend
+      app: backend
+      component: backend-green
+    name: backend-green
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: backend-green
+    strategy:
+      activeDeadlineSeconds: 21600
+      recreateParams:
+        timeoutSeconds: 600
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: backend
+          component: backend-green
+          deploymentconfig: backend-green
+        name: backend-green
+      spec:
+        containers:
+        - env:
+          - name: TZ
+            value: "Brazil"
+          image: backend
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /v1/health/live
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: backend-green
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /v1/health/read
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: 50m
+            requests:
+              memory: 128Mi
+              cpu: 10m
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - backend-green
+        from:
+          kind: ImageStreamTag
+          name: backend-green:latest
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: backend
+      application: backend
+      component: backend-green
+    name: backend-green
+  spec:
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentconfig: backend-green
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      application: backend
+      component: backend-green
+    name: backend-green
+  spec:
+    to:
+      kind: Service
+      name: backend-green
+      weight: 100
+    wildcardPolicy: None
+# Backend Route
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/balance: roundrobin
+    name: backend
+    labels:
+      application: backend
+      component: backend
+  spec:
+    alternateBackends:
+      - kind: Service
+        name: backend-green
+        weight: 100
+    to:
+      kind: Service
+      name: backend-blue
+      weight: 0
+    wildcardPolicy: None
+parameters:
+- displayName: Application name
+  name: APPLICATION_NAME
+  required: true
+  value: backend
+- description: Git source URI for application
+  displayName: Git source repository
+  name: GIT_URI
+  required: true
+- displayName: ImageStream Namespace
+  description: Namespace in which the ImageStreams for Red Hat NodeJs image is installed. These ImageStreams are normally installed in the openshift namespace. You should only need to modify this if you've installed the ImageStreams in a different namespace/project.
+  name: IMAGE_STREAM_NAMESPACE
+  required: true
+  value: openshift

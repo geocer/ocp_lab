@@ -4,10 +4,10 @@
 
 >The DevOps with OpenShift Workshop provides full-stack and DevOps engineers an introduction to OpenShift and containers and how it can be used to build fully automated end-to-end deployment pipelines using basic deployments techniques like rolling deploys.
 
->This workshop is a first event with a series of hands-on labs that are designed to familiarize participants with DevOps, Continuous Delivery concepts for Gerdau Reference Architecture approach. The workshop will walk them through provide and building an automated applications using concepts of Gerdau reference Architecture.
+>This workshop is a first event with a series of hands-on labs that are designed to familiarize participants with DevOps, Continuous Delivery concepts for  Reference Architecture approach. The workshop will walk them through provide and building an automated applications using concepts of reference Architecture.
 
 
-The lab application used in this workshop is available at https://gitlab.gerdau.digital/devops-public/ocp-lab-guide.git
+The lab application used in this workshop is available at https:///devops-public/ocp-lab-guide.git
 
 ### Agenda
 * DevOps Introduction
@@ -123,7 +123,7 @@ The Lab stack is a microservices architecture which is a simulation of frontend 
 
 Take a quick look in code of both applications.
 
-## Gerdau's Reference Architecture Highlights:
+## Reference Architecture Highlights:
 
 * Take advantage of emerging technologies for any microservice component.
 
@@ -145,7 +145,7 @@ oc new-project <your-name>
 
 ```
 
-* **Openshift Client** Import the templates provided by the Devops Team. An [backend](https://gitlab.gerdau.digital/devops-public/ocp-lab-guide/blob/master/stacks/backend-template.yaml) and [frontend](https://gitlab.gerdau.digital/devops-public/ocp-lab-guide/blob/master/stacks/frontend-template.yaml
+* **Openshift Client** Import the templates provided by the Devops Team. An [backend](https:///devops-public/ocp-lab-guide/blob/master/stacks/backend-template.yaml) and [frontend](https:///devops-public/ocp-lab-guide/blob/master/stacks/frontend-template.yaml
 ) will be used for that Lab.
 
 
@@ -158,13 +158,13 @@ oc create -f ocp-lab-guide/stacks/frontend-template.yaml
 
 ```
 
-* **Openshift Web UI** In the OpenShift service catalog search for "Backend Gerdau Lab" and then click on the **Next** button.
+* **Openshift Web UI** In the OpenShift service catalog search for "Backend Lab" and then click on the **Next** button.
 
 ![Search in Catalog](./images/step3.1.png)
 
 * Enter the requested info. Your Gitlab project code created in previous steps are required. 
 
-* **Openshift Web UI** In the OpenShift service catalog search for "Frontend Gerdau Lab" and then click on the **Next** button.
+* **Openshift Web UI** In the OpenShift service catalog search for "Frontend Lab" and then click on the **Next** button.
 
 ![Search in Catalog](./images/step3.2.png)
 
@@ -205,7 +205,7 @@ It is a expected return from web browser:
 
 ```json
 
-{"info":{"description":"Cloud/Devops Gerdau","title":"API Cloud/Devops Gerdau","version":"1.0.0"},"host":"<your-backend-address>","basePath":"/v1","produces":["application/json","application/json"],"schemes":["https"],"swagger":"2.0","paths":{},"definitions":{"Request":{"required":[],"properties":{"chars":{"type":"string","description":"Retorna nome informado."}}}},"responses":{},"parameters":{},"securityDefinitions":{},"tags":[]}
+{"info":{"description":"Cloud/Devops","title":"API Cloud/Devops","version":"1.0.0"},"host":"<your-backend-address>","basePath":"/v1","produces":["application/json","application/json"],"schemes":["https"],"swagger":"2.0","paths":{},"definitions":{"Request":{"required":[],"properties":{"chars":{"type":"string","description":"Retorna nome informado."}}}},"responses":{},"parameters":{},"securityDefinitions":{},"tags":[]}
 
 
 ```
@@ -290,7 +290,7 @@ kubernetes.pod_name:backend* AND kubernetes.namespace_name:<your-namespace> AND 
 
 ```
 
-* Analyze the results and try to think in real Gerdau application, where these queries can fit.
+* Analyze the results and try to think in real application, where these queries can fit.
 
 
 ## Reference Architecture Highlights:
@@ -340,7 +340,7 @@ Estimated time: 20 minutes
 
 ![CPU Target](./images/step7.2.png)
 
-* Using [Apache JMeter](http://jmeter.apache.org/download_jmeter.cgi) take a template stress test provided by Devops Team [frontend-stress-test](https://gitlab.gerdau.digital/devops-public/ocp-lab-guide/blob/master/bonus/frontend-stress-test.jmx).
+* Using [Apache JMeter](http://jmeter.apache.org/download_jmeter.cgi) take a template stress test provided by Devops Team [frontend-stress-test](https:///devops-public/ocp-lab-guide/blob/master/bonus/frontend-stress-test.jmx).
 
 
 * Edit `frontend-stress-test.jmx` file providing your frontend URL address and start a Jmeter test.
@@ -421,7 +421,7 @@ git push -u backend feature-blue
 
 ```
 
-* Import the templates provided by the Devops Team. An [backend-bluegreen](https://gitlab.gerdau.digital/devops-public/ocp-lab-guide/blob/master/bonus/backend-bluegreen-template.yaml) will be used for that Lab.
+* Import the templates provided by the Devops Team. An [backend-bluegreen](https:///devops-public/ocp-lab-guide/blob/master/bonus/backend-bluegreen-template.yaml) will be used for that Lab.
 
 
 ```sh
@@ -433,7 +433,7 @@ oc create -f ocp-lab-guide/bonus/backend-bluegreen-template.yaml
 ```
 
 
-* In the OpenShift Web UI service catalog search for "Backend Gerdau Bluegreen Lab" and then click on the **Next** button.
+* In the OpenShift Web UI service catalog search for "Backend Bluegreen Lab" and then click on the **Next** button.
 * Enter the requested info. Your Gitlab project code created in previous steps are required. 
 
 ![Search in Catalog](./images/step8.1.png)
@@ -484,7 +484,7 @@ It is a expected return from anonymous web browser session:
 ```
 
 
-## Gerdau's Reference Architecture Highlights:
+## Reference Architecture Highlights:
 
 * Minimize downtime
 * Take advantage of plataforms features.

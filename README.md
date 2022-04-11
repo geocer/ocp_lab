@@ -48,7 +48,7 @@ oc create -f runner.yaml
 
 ```
 
-## Gerdau's Reference Architecture Highlights:
+## Reference Architecture Highlights:
 
 * Stacks can be provided and destroyed with minimal effort.
 * Templates can be migrated for any Cloud provider.
@@ -66,7 +66,7 @@ Estimated time: 10 minutes
 
 ```sh
 
-git clone https://gitlab.gerdau.digital/devops-public/ocp-lab-guide.git
+git clone https:///devops-public/ocp-lab-guide.git
 cd ocp-lab-guide/apps/backend
 git init
 git remote add backend <your-gitlab-project-url>
@@ -79,7 +79,7 @@ git push -u backend master
 
 ```sh
 
-git clone https://gitlab.gerdau.digital/devops-public/ocp-lab-guide.git
+git clone https:///devops-public/ocp-lab-guide.git
 cd ocp-lab-guide/apps/frontend
 git init
 git remote add frontend <your-gitlab-project-url>
@@ -293,7 +293,7 @@ kubernetes.pod_name:backend* AND kubernetes.namespace_name:<your-namespace> AND 
 * Analyze the results and try to think in real Gerdau application, where these queries can fit.
 
 
-## Gerdau's Reference Architecture Highlights:
+## Reference Architecture Highlights:
 
 * Logging index patterns.
 
@@ -321,7 +321,7 @@ while :; do curl -I <backend-url/api-docs/> | grep -i "HTTP/1.1 200 OK"; done
 
 Take a quick look in backend code module file `api-health.js`.
 
-## Gerdau's Reference Architecture Highlights:
+## Reference Architecture Highlights:
 
 * Release new version from applications any time.
 * Minimize downtime
@@ -392,7 +392,7 @@ git checkout -b feature-blue master
 let options = {
     swaggerDefinition: {
         info: {
-            description: 'Cloud/Devops Gerdau',
+            description: 'Cloud/Devops',
             title: 'Blue version', //insert this new line
             version: '1.0.0',
         },
@@ -456,7 +456,7 @@ It is a expected return from web browser
 
 ```json
 
-{"info":{"description":"Cloud/Devops Gerdau","title":"API Cloud/Devops Gerdau","version":"1.0.0"},"host":"<your-backend-address>","basePath":"/v1","produces":["application/json","application/json"],"schemes":["https"],"swagger":"2.0","paths":{},"definitions":{"Request":{"required":[],"properties":{"chars":{"type":"string","description":"Retorna nome informado."}}}},"responses":{},"parameters":{},"securityDefinitions":{},"tags":[]}
+{"info":{"description":"Cloud/Devops","title":"API Cloud/Devops","version":"1.0.0"},"host":"<your-backend-address>","basePath":"/v1","produces":["application/json","application/json"],"schemes":["https"],"swagger":"2.0","paths":{},"definitions":{"Request":{"required":[],"properties":{"chars":{"type":"string","description":"Retorna nome informado."}}}},"responses":{},"parameters":{},"securityDefinitions":{},"tags":[]}
  
 ```
 
@@ -479,7 +479,7 @@ It is a expected return from anonymous web browser session:
 
 ```json
 
-{"info":{"description":"Cloud/Devops Gerdau","title":"Blue Version","version":"1.0.0"},"host":"<your-backend-address>","basePath":"/v1","produces":["application/json","application/json"],"schemes":["https"],"swagger":"2.0","paths":{},"definitions":{"Request":{"required":[],"properties":{"chars":{"type":"string","description":"Retorna nome informado."}}}},"responses":{},"parameters":{},"securityDefinitions":{},"tags":[]}
+{"info":{"description":"Cloud/Devops","title":"Blue Version","version":"1.0.0"},"host":"<your-backend-address>","basePath":"/v1","produces":["application/json","application/json"],"schemes":["https"],"swagger":"2.0","paths":{},"definitions":{"Request":{"required":[],"properties":{"chars":{"type":"string","description":"Retorna nome informado."}}}},"responses":{},"parameters":{},"securityDefinitions":{},"tags":[]}
  
 ```
 
